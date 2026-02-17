@@ -75,6 +75,7 @@ pub async fn run() -> String {
         }
         maze.draw();
         king.draw();
+        println!("King position: ({:.2}, {:.2})", king.get_x(), king.get_y());
     next_frame().await;
     }
 }
