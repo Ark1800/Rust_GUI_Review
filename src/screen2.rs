@@ -3,7 +3,6 @@ use crate::modules::still_image::StillImage;
 use crate::modules::label::Label;
 use crate::modules::text_button::TextButton;
 use crate::modules::messagebox::{MessageBox, MessageBoxResult};
-use crate::modules::grid::draw_grid;
 use crate::modules::collision::check_collision;
 use crate::modules::scale::use_virtual_resolution;
 
