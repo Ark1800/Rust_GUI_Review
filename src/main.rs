@@ -8,7 +8,6 @@ mod modules;
 mod screen1;
 mod screen2;
 use macroquad::prelude::*;
-
 /// Set up window settings before the app runs
 fn window_conf() -> Conf {
     Conf {
