@@ -7,7 +7,6 @@ use crate::modules::collision::check_collision;
 use crate::modules::scale::use_virtual_resolution;
 //TO DOOOOOOOOOOOOOOO
 //1. update web build
-//2. make msg box in middle of screen
 
 pub async fn run() -> String {
     // Define virtual resolution constants

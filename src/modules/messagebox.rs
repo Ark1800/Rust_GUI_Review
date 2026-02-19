@@ -254,8 +254,10 @@ impl MessageBox {
     
     // Center the dialog in the screen
     pub fn centered(&mut self) -> &mut Self {
-        self.x = (screen_width() - self.width) / 2.0;
-        self.y = (screen_height() - self.height) / 2.0;
+        const VIRTUAL_WIDTH: f32 = 1024.0;
+        const VIRTUAL_HEIGHT: f32 = 768.0;
+        self.x = (VIRTUAL_WIDTH - self.width) / 2.0;
+        self.y = (VIRTUAL_HEIGHT - self.height) / 2.0;
         self
     }
     
