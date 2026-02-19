@@ -18,7 +18,7 @@ pub async fn run() -> String {
     30.0,  // width 
     30.0,  // height
     30.0,  // x position
-    0.0,   // y position
+    30.0,   // y position
     true,   // Enable stretching
     1.0,    // Normal zoom (100%)
     ).await;
@@ -40,6 +40,15 @@ pub async fn run() -> String {
     true,   // Enable stretching
     1.0,    // Normal zoom (100%)
     ).await;
+    let wall = StillImage::new(
+    "assets/end.png",
+    130.0,  // width
+    100.0,  // height
+    0.0,  // x position
+    -100.0,   // y position
+    true,   // Enable stretching
+    1.0,    // Normal zoom (100%)
+    ).await;
     //labels
     let btn_return = TextButton::new(
     800.0,
@@ -52,7 +61,7 @@ pub async fn run() -> String {
     30
     );
     // Speed of movement in pixels per second
-    const MOVE_SPEED: f32 = 200.0;
+    const MOVE_SPEED: f32 = 400.0;
     let starttime = get_time();
     //labels
     let lbl_time_str = Label::new("Time:", 900.0, 40.0, 30);
@@ -103,6 +112,9 @@ pub async fn run() -> String {
                 if check_collision(&king, &maze, 1) {
                     king.set_x(old_pos.x); // Undo if collision happens
                 }
+                if check_collision(&king, &wall, 1) {
+                    king.set_x(old_pos.x); // Undo if collision happens
+                }
                 if check_collision(&king, &end, 1) {
                     end_box.show();  // Just show the message box
                 }
@@ -112,6 +124,9 @@ pub async fn run() -> String {
             if movement.y != 0.0 {
                 king.set_y(king.get_y() + movement.y);
                 if check_collision(&king, &maze, 1)  {
+                    king.set_y(old_pos.y); // Undo if collision happens
+                }
+                if check_collision(&king, &wall, 1) {
                     king.set_y(old_pos.y); // Undo if collision happens
                 }
                 if check_collision(&king, &end, 1) {
@@ -124,6 +139,7 @@ pub async fn run() -> String {
         maze.draw();
         king.draw();
         end.draw();
+        wall.draw();
         lbl_time_num.draw();
         lbl_time_str.draw();
         end_box.centered();  // Center the message box on screen
