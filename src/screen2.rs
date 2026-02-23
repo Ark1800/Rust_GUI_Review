@@ -5,23 +5,14 @@ use crate::modules::text_button::TextButton;
 use crate::modules::messagebox::{MessageBox, MessageBoxResult};
 use crate::modules::collision::check_collision;
 use crate::modules::scale::use_virtual_resolution;
-//TO DOOOOOOOOOOOOOOO
-//1. update web build
+use crate::modules::player::Player;
 
 pub async fn run() -> String {
     // Define virtual resolution constants
     const VIRTUAL_WIDTH: f32 = 1024.0;
     const VIRTUAL_HEIGHT: f32 = 768.0;
     //images
-    let mut king = StillImage::new(
-    "assets/king.png",
-    30.0,  // width 
-    30.0,  // height
-    30.0,  // x position
-    30.0,   // y position
-    true,   // Enable stretching
-    1.0,    // Normal zoom (100%)
-    ).await;
+    let mut player = Player::new("assets/king.png", 30.0, 30.0).await;
     let maze = StillImage::new(
     "assets/maze.png",
     VIRTUAL_WIDTH,  // width
@@ -61,7 +52,6 @@ pub async fn run() -> String {
     30
     );
     // Speed of movement in pixels per second
-    const MOVE_SPEED: f32 = 400.0;
     let starttime = get_time();
     //labels
     let lbl_time_str = Label::new("Time:", 900.0, 40.0, 30);
@@ -75,69 +65,27 @@ pub async fn run() -> String {
         
         // Only process input if message box is NOT visible
         if !end_box.is_visible() {
-            //switching to screen 1
-            if btn_return.click() {
-                return "screen1".to_string();
+            player.move_player();
+            let old_pos = vec2(player.view_player().get_x(), player.view_player().get_y());
+            //x collision
+            if check_collision(player.view_player(), &maze, 1) {
+                println!("Collided with maze");
+                player.set_oldpos(old_pos.x, old_pos.y); // Undo if collision happens
             }
-            // Direction to move in
-            let mut move_dir = vec2(0.0, 0.0);
-
-            // Keyboard input
-            if is_key_down(KeyCode::D) {
-                move_dir.x += 1.0;
+            if check_collision(player.view_player(), &wall, 1) {
+                player.set_oldpos(old_pos.x, old_pos.y); // Undo if collision happens
             }
-            if is_key_down(KeyCode::A) {
-                move_dir.x -= 1.0;
+            if check_collision(player.view_player(), &end, 1) {
+                end_box.show();  // Just show the message box
             }
-            if is_key_down(KeyCode::S) {
-                move_dir.y += 1.0;
-            }
-            if is_key_down(KeyCode::W) {
-                move_dir.y -= 1.0;
-            }
-
-            // Normalize the movement to prevent faster diagonal movement
-            if move_dir.length() > 0.0 {
-                move_dir = move_dir.normalize();
-            }
-
-            // Apply movement based on frame time
-            let movement = move_dir * MOVE_SPEED * get_frame_time();
-
-            // Save old position in case of collision
-            let old_pos = king.pos();
-            // Move X first
-            if movement.x != 0.0 {
-                king.set_x(king.get_x() + movement.x);
-                if check_collision(&king, &maze, 1) {
-                    king.set_x(old_pos.x); // Undo if collision happens
-                }
-                if check_collision(&king, &wall, 1) {
-                    king.set_x(old_pos.x); // Undo if collision happens
-                }
-                if check_collision(&king, &end, 1) {
-                    end_box.show();  // Just show the message box
-                }
-            }
-
-            // Move Y next
-            if movement.y != 0.0 {
-                king.set_y(king.get_y() + movement.y);
-                if check_collision(&king, &maze, 1)  {
-                    king.set_y(old_pos.y); // Undo if collision happens
-                }
-                if check_collision(&king, &wall, 1) {
-                    king.set_y(old_pos.y); // Undo if collision happens
-                }
-                if check_collision(&king, &end, 1) {
-                    end_box.show();  // Just show the message box
-                }
-            }
-            let currenttime = format!("{:.1}", get_time()-starttime);
-            lbl_time_num.set_text(currenttime);
         }
+        if btn_return.click() {
+            return "screen1".to_string();
+        }
+        let currenttime = format!("{:.1}", get_time()-starttime);
+        lbl_time_num.set_text(currenttime);
         maze.draw();
-        king.draw();
+        player.draw();
         end.draw();
         wall.draw();
         lbl_time_num.draw();

@@ -20,3 +20,4 @@ pub mod text_button;
 pub mod collision;
 pub mod scale;
 pub mod messagebox;
+pub mod player;
